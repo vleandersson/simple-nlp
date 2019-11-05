@@ -1,34 +1,46 @@
 import React from "react";
 
 import { WordPunctTokenizer, PorterStemmer, SentimentAnalyzer } from "natural";
+// import { SentimentAnalyzer } from "natural/lib/natural/sentiment/SentimentAnalyzer";
+// var SentimentAnalyzer = require("natural").SentimentAnalyzer;
 
 const TRIGGER_WORDS = ["hate"];
 
 const TOKENIZER = new WordPunctTokenizer();
 const STEMMER = PorterStemmer;
 
-function loadSentimentAnalyzer() {
-  const sentimentAnalyzer = new SentimentAnalyzer.SentimentAnalyzer(
+export const Natural = () => {
+  const [negativeInputText] = React.useState(
+    "I really do hate people. I've never liked em'. Fuck You!"
+  );
+
+  const [positiveInputText] = React.useState(
+    "I love people. The world is great!"
+  );
+
+  const cleanedText1 = cleanData(negativeInputText);
+  const cleanedText2 = cleanData(positiveInputText);
+
+  const sentimentAnalyzer = new SentimentAnalyzer(
     "English",
     STEMMER,
     "pattern"
   );
 
-  return sentimentAnalyzer;
-}
+  const sentiment1 = sentimentAnalyzer.getSentiment(cleanedText1);
+  const sentiment2 = sentimentAnalyzer.getSentiment(cleanedText2);
 
-export const Natural = () => {
-  const [inputText] = React.useState("I do hate people. I've never liked em'");
+  return (
+    <>
+      <h1>{negativeInputText}</h1>
+      <body>{sentiment1 > 0 && "This comment is positive!"}</body>
+      <body>{sentiment1 < 0 && "This comment is negative!"}</body>
 
-  // const cleanedText = cleanData(inputText);
-
-  // const analysed = SENTIMENT_ANALYZER.getSentiment(inputText);
-
-  const sentimentAnalyzer = loadSentimentAnalyzer();
-
-  sentimentAnalyzer.getSentiment(inputText);
-
-  return <>{inputText}</>;
+      <h1>{positiveInputText}</h1>
+      <body>{sentiment2 > 0 && "This comment is positive!"}</body>
+      <body>{sentiment2 < 0 && "This comment is negative!"}</body>
+    </>
+  );
 };
 
 function cleanData(inputText) {
@@ -39,10 +51,10 @@ function cleanData(inputText) {
   console.log("tokenized", tokenized);
   // Remove Stop Words
   // Stemming
-  const stemmed = STEMMER.stem(tokenized);
-  console.log("stemmed", stemmed);
+  // const stemmed = STEMMER.stem(tokenized);
+  // console.log("stemmed", stemmed);
 
-  return stemmed;
+  return tokenized;
 }
 
 function tokenize(str) {
