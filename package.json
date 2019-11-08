@@ -26,8 +26,8 @@
     ]
   },
   "scripts": {
-    "start": "webpack-dev-server --config webpack.dev.config.js --color",
-    "build": "webpack --config webpack.config.js"
+    "start": "webpack-dev-server --config configs/webpack.dev.config.js --color",
+    "build": "webpack --config configs/webpack.config.js"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^2.3.1",
@@ -36,7 +36,7 @@
     "eslint-config-airbnb": "^18.0.1",
     "eslint-config-prettier": "^4.1.0",
     "eslint-plugin-import": "^2.18.2",
-    "eslint-plugin-jsx": "^6.2.3",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-prettier": "^3.0.1",
     "prettier": "^1.18.2",
     "ts-loader": "^6.0.4",
