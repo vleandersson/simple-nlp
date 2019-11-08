@@ -26,18 +26,30 @@
     ]
   },
   "scripts": {
-    "start": "webpack-dev-server --config configs/webpack.dev.config.js --color",
-    "build": "webpack --config configs/webpack.config.js"
+    "start": "webpack-dev-server --config configs/webpack.dev.config.js --color --mode=development",
+    "build": "webpack --config configs/webpack.config.js --mode=production",
+    "test": "jest --config=./jest.config.js",
+    "test:watch": "yarn test --watch"
   },
   "devDependencies": {
+    "@babel/cli": "^7.7.0",
+    "@babel/core": "^7.7.2",
+    "@babel/preset-env": "^7.7.1",
+    "@babel/preset-typescript": "^7.7.2",
+    "@types/jest": "^24.0.22",
     "@typescript-eslint/eslint-plugin": "^2.3.1",
     "@typescript-eslint/parser": "^2.3.1",
+    "babel-jest": "^24.9.0",
+    "babel-loader": "^8.0.6",
+    "babel-plugin-macros": "^2.6.1",
     "eslint": "^6.4.0",
     "eslint-config-airbnb": "^18.0.1",
     "eslint-config-prettier": "^4.1.0",
     "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-prettier": "^3.0.1",
+    "jest": "^24.9.0",
+    "jest-resolve": "^24.9.0",
     "prettier": "^1.18.2",
     "ts-loader": "^6.0.4",
     "typescript": "^3.5.3",
