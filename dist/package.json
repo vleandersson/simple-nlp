@@ -1,0 +1,25 @@
+{
+  "author": "Viktor Leandersson",
+  "name": "simple-nlp",
+  "description": "Simple NLP is a library with the fundamentals for basic natural language processing",
+  "keywords": [
+    "simple nlp"
+  ],
+  "version": "0.1.6",
+  "homepage": "https://github.com/vleandersson/simple-nlp",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vleandersson/simple-nlp",
+    "directory": "packages/simple-nlp"
+  },
+  "files": [
+    "README.md",
+    "index.js",
+    "umd/"
+  ],
+  "main": "index.js",
+  "engines": {
+    "node": ">=0.10.0"
+  }
+}
