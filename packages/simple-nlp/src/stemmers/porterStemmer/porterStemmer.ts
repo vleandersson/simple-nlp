@@ -17,7 +17,7 @@ function categorizeChars(token: string) {
 
 // calculate the "measure" M of a word. M is the count of VC sequences dropping
 // an initial C if it exists and a trailing V if it exists.
-function measure(token: string) {
+function measure(token: string | null) {
   if (!token) return -1;
 
   return (
@@ -39,7 +39,7 @@ function attemptReplace(
   token: string,
   pattern: RegExp | string,
   replacement: string,
-  callback?: (result: string) => string
+  callback?: (result: string) => string | null
 ) {
   let result = null;
 
@@ -64,8 +64,9 @@ function attemptReplacePatterns(
   for (let i = 0; i < replacements.length; i++) {
     if (
       measureThreshold === null ||
-      measure(attemptReplace(token, replacements[i][0], replacements[i][1])) >
-        measureThreshold
+      (measureThreshold &&
+        measure(attemptReplace(token, replacements[i][0], replacements[i][1])) >
+          measureThreshold)
     ) {
       replacement =
         attemptReplace(replacement, replacements[i][0], replacements[i][2]) ||
@@ -96,11 +97,13 @@ function replaceRegex(
   let result = "";
 
   if (regex.test(token)) {
-    let parts = regex.exec(token);
+    const parts = regex.exec(token);
 
-    includeParts.forEach(i => {
-      result += parts[i];
-    });
+    if (parts !== null) {
+      includeParts.forEach(i => {
+        result += parts[i];
+      });
+    }
   }
 
   if (measure(result) > minimumMeasure) {
@@ -133,7 +136,7 @@ function step1b(token: string) {
     if (measure(token.substr(0, token.length - 3)) > 0)
       return token.replace(/eed$/, "ee");
   } else {
-    let result = attemptReplace(token, /(ed|ing)$/, "", function(token) {
+    let result = attemptReplace(token, /(ed|ing)$/, "", token => {
       if (categorizeGroups(token).indexOf("V") >= 0) {
         result = attemptReplacePatterns(token, [
           ["at", "", "ate"],
