@@ -16,6 +16,7 @@
   "engines": {
     "node": ">=0.10.0"
   },
+  "main": "./index.ts",
   "dependencies": {},
   "devDependencies": {
     "ts-loader": "^6.0.4",

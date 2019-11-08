@@ -1,15 +1,31 @@
 {
   "compilerOptions": {
-    "outDir": "./dist/",
-    "sourceMap": true,
-    "noImplicitAny": true,
+    // "allowJs": false,
+    "allowSyntheticDefaultImports": true,
+    "alwaysStrict": true,
     "declaration": true,
-    "module": "es6",
+    // "esModuleInterop": true,
+    // "forceConsistentCasingInFileNames": true,
+    // "isolatedModules": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    // "noImplicitAny": true,
+    // "noImplicitReturns": true,
+    // "noImplicitThis": true,
+    // "noUnusedLocals": false,
+    "outDir": "./dist/types",
+    "resolveJsonModule": true,
+    // "skipLibCheck": true,
+    "sourceMap": true,
+    "strict": true,
+    // "strictFunctionTypes": true,
+    // "strictNullChecks": true,
+    // "suppressImplicitAnyIndexErrors": true,
     "target": "es5",
-    "jsx": "react",
   },
   "exclude": [
     "node_modules",
+    "dist",
     "**/*.spec.ts"
   ]
 }

@@ -25,12 +25,12 @@
       "last 1 safari version"
     ]
   },
-  "main": "dist/bundle.js",
+  "main": "packages/simple-nlp/index.tx",
   "scripts": {
-    "start": "webpack-dev-server --config configs/webpack.dev.config.js --color --mode=development",
-    "build": "webpack --config configs/webpack.config.js --mode=production",
+    "build": "webpack --config configs/webpack.config.js --mode=production && node scripts/bundle-files.js",
     "test": "jest --config=./jest.config.js",
-    "test:watch": "yarn test --watch"
+    "test:watch": "yarn test --watch",
+    "publish-package": "npm login && npm publish ./dist --access=public"
   },
   "devDependencies": {
     "@babel/cli": "^7.7.0",
@@ -55,8 +55,7 @@
     "ts-loader": "^6.0.4",
     "typescript": "^3.5.3",
     "webpack": "^4.39.1",
-    "webpack-cli": "^3.3.6",
-    "webpack-dev-server": "^3.8.0"
+    "webpack-cli": "^3.3.6"
   },
   "dependencies": {}
 }
