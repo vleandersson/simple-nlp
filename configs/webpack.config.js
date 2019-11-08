@@ -1,7 +1,7 @@
 const path = require("path");
 
 module.exports = {
-  entry: { "simple-nlp": __dirname + "./packages/simple-nlp/index.ts" },
+  entry: { "simple-nlp": "./packages/simple-nlp/index.ts" },
   devtool: "inline-source-map",
   mode: "development",
   module: {
