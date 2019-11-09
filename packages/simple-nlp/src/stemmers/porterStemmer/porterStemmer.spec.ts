@@ -1,17 +1,10 @@
 import { porterStemFn } from "./porterStemmer";
 
-test("it should stem run", () => {
-  expect(porterStemFn("run")).toEqual("run");
-});
-
-test("it should stem running", () => {
-  expect(porterStemFn("running")).toEqual("run");
-});
-
-test("it should stem cut", () => {
-  expect(porterStemFn("cut")).toEqual("cut");
-});
-
-test("it should stem cutting", () => {
-  expect(porterStemFn("cutting")).toEqual("cut");
+describe("English Porter Stemmer", () => {
+  test("Stemmer function should stem", () => {
+    expect(porterStemFn("run")).toEqual("run");
+    expect(porterStemFn("running")).toEqual("run");
+    expect(porterStemFn("cut")).toEqual("cut");
+    expect(porterStemFn("cutting")).toEqual("cut");
+  });
 });
