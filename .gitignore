@@ -6,8 +6,7 @@
 .pnp.js
 
 # production
-/dist
-!/dist/package.json
+**/dist
 
 # misc
 .DS_Store

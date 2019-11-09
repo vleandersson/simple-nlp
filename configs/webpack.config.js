@@ -14,6 +14,7 @@ module.exports = {
       { test: /package.json/ }
     ]
   },
+  target: "web",
   resolve: {
     extensions: [".tsx", ".ts", ".js"]
   },
