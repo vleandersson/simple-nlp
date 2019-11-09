@@ -1,3 +1,8 @@
+import { stemmer } from "../../helpers/stemmerHelpers";
+
+export const porterStemmerFr = (text: string[]) =>
+  stemmer(text, porterStemFrFn);
+
 /**
  * Stem a word thanks to Porter Stemmer rules
  * @param  {String} token Word to be stemmed

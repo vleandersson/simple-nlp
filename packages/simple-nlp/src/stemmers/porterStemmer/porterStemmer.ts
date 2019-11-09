@@ -1,3 +1,5 @@
+import { stemmer } from "../../helpers/stemmerHelpers";
+
 // denote groups of consecutive consonants with a C and consecutive vowels
 // with a V.
 function categorizeGroups(token: string) {
@@ -280,9 +282,11 @@ function step5b(token: string) {
 }
 
 // perform full stemming algorithm on a single word
-export const porterStemFn = (token: string) => {
+const porterStemFn = (token: string) => {
   if (token.length < 3) return token;
   return step5b(
     step5a(step4(step3(step2(step1c(step1b(step1a(token.toLowerCase())))))))
   ).toString();
 };
+
+export const porterStemmer = (text: string[]) => stemmer(text, porterStemFn);

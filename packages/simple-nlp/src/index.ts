@@ -1,1 +1,2 @@
-export * from "./stemmers/index";
+export * from "./stemmers";
+export * from "./tokenizers";
