@@ -7,6 +7,8 @@ const success = msg => console.info("\x1b[32m", msg, "\x1b[0m");
 const start = msg => console.info("\x1b[45m", msg, "\x1b[0m");
 const error = msg => console.error("\x1b[31m", msg, "\x1b[0m");
 
+const DIST_FOLDER = __dirname + `/../dist`;
+
 // Get package args
 // args = [];
 // process.argv.forEach(function(val) {
@@ -23,12 +25,16 @@ async function run(packageName) {
     success("Checks completed");
 
     start("Build started");
-    // await runBuild();
+    await runBuild();
     success("Build completed");
 
     start("Build package files from template");
     await runBuildPackage(packageName);
     success("Build package files from template completed");
+
+    start("Write index files");
+    await writeIndexFiles();
+    success("Write index files completed");
   } catch (err) {
     error(err);
   }
@@ -67,7 +73,7 @@ async function runBuildPackage(packageName) {
   };
 
   fs.writeFile(
-    __dirname + "/../dist/package.json",
+    `${DIST_FOLDER}/package.json`,
     JSON.stringify(packageJson),
     err => {
       if (err) {
@@ -78,6 +84,30 @@ async function runBuildPackage(packageName) {
 
   const files = [{ from: "README.md" }, { from: ".npmignore" }];
   await copyFiles(files, fs);
+}
+
+async function writeIndexFiles() {
+  // Types index
+  fs.writeFile(
+    `${DIST_FOLDER}/index.d.ts`,
+    'export * from "./types/src";',
+    err => {
+      if (err) {
+        return error(err);
+      }
+    }
+  );
+
+  // Umd index
+  fs.writeFile(
+    `${DIST_FOLDER}/index.js`,
+    'module.exports = require("./umd/simple-nlp.production.min.js");',
+    err => {
+      if (err) {
+        return error(err);
+      }
+    }
+  );
 }
 
 function stepUpVersion(currentVersion, type) {
