@@ -1,4 +1,4 @@
-import { stemmer } from "../../helpers/stemmerHelpers";
+import { stemmer } from "../../helpers/stemmerHelpers/stemmerHelpers";
 
 // denote groups of consecutive consonants with a C and consecutive vowels
 // with a V.

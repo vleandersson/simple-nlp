@@ -1,1 +1,2 @@
-export * from "./tokenizerHelpers";
+export * from "./tokenizerHelpers/tokenizerHelpers";
+export * from "./stemmerHelpers/stemmerHelpers";

@@ -1,4 +1,4 @@
-import { stemmer } from "../../helpers/stemmerHelpers";
+import { stemmer } from "../../helpers/stemmerHelpers/stemmerHelpers";
 
 export const porterStemmerFr = (text: string[]) =>
   stemmer(text, porterStemFrFn);
