@@ -28,7 +28,7 @@ module.exports = {
   resolve: {
     extensions: [".tsx", ".ts", ".js"]
   },
-  plugins: [new CleanWebpackPlugin()],
+  // plugins: [new CleanWebpackPlugin()],
   output: {
     filename: "umd/[name].production.min.js",
     path: path.resolve(__dirname, "../dist"),
