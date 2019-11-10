@@ -1,4 +1,4 @@
-module.exports = (args, fs) => {
+module.exports = async (args, fs) => {
   // Copy files
   args.forEach(file => {
     copyFile(file.from, `./dist/${file.to || file.from}`);
