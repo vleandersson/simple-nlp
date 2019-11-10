@@ -1,4 +1,5 @@
 const path = require("path");
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
 module.exports = {
   entry: { "simple-nlp": "./packages/simple-nlp/index.ts" },
@@ -18,6 +19,7 @@ module.exports = {
   resolve: {
     extensions: [".tsx", ".ts", ".js"]
   },
+  plugins: [new CleanWebpackPlugin()],
   output: {
     filename: "umd/[name].production.min.js",
     path: path.resolve(__dirname, "../dist"),
