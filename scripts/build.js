@@ -71,7 +71,7 @@ async function runBuildPackage(packageName) {
     JSON.stringify(packageJson),
     err => {
       if (err) {
-        return console.log(err);
+        return error(err);
       }
     }
   );
