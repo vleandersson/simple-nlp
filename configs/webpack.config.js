@@ -9,7 +9,16 @@ module.exports = {
     rules: [
       {
         test: /\.(ts|tsx)$/,
-        use: "ts-loader",
+        use: [
+          {
+            loader: "ts-loader",
+            options: {
+              transpileOnly: true,
+              experimentalWatchApi: true,
+              happyPackMode: true
+            }
+          }
+        ],
         exclude: /node_modules/
       },
       { test: /package.json/ }

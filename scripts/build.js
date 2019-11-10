@@ -6,6 +6,7 @@ var copyFiles = require("./build-copy-files");
 const success = msg => console.info("\x1b[32m", msg, "\x1b[0m");
 const start = msg => console.info("\x1b[45m", msg, "\x1b[0m");
 const error = msg => console.error("\x1b[31m", msg, "\x1b[0m");
+const info = msg => console.info("\x1b[45m", msg, "\x1b[0m");
 
 const DIST_FOLDER = __dirname + `/../dist`;
 
@@ -63,10 +64,14 @@ async function runBuildPackage(packageName) {
       `/../packages/${packageName || "simple-nlp"}/package.json`)
   };
 
+  const nextNpmVersion = stepUpVersion(currentPackageVersion);
+
+  info(`Next NPM version detected: ${nextNpmVersion}`);
+
   delete packageJson.devDependencies;
   packageJson = {
     ...packageJson,
-    version: stepUpVersion(currentPackageVersion),
+    version: nextNpmVersion,
     files: ["README.md", "types/", "index.js", "index.d.ts", "umd/"],
     main: "index.js",
     types: "index.d.ts"
