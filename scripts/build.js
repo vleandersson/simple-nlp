@@ -21,7 +21,7 @@ run();
 async function run(packageName) {
   try {
     start("Checks started");
-    // await runChecks();
+    await runChecks();
     success("Checks completed");
 
     start("Build started");
