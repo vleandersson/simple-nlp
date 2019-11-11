@@ -46,8 +46,10 @@ async function runChecks() {
 }
 
 async function runBuild() {
+  const webpackConfigPath = __dirname + "/../configs/webpack.config.js";
+  info(`Using config ${webpackConfigPath}`);
   const build = await exec(
-    "webpack --config configs/webpack.config.js --mode=production"
+    `webpack --config ${webpackConfigPath} --mode=production`
   );
   console.log(build.stdout);
 }
