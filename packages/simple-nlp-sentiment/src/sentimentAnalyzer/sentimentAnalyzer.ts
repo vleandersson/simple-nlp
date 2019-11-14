@@ -1,48 +1,53 @@
-interface VocSenticon {
+interface BaseOptions {
+  negations?: string[];
+}
+
+interface VocSenticonOptions extends BaseOptions {
   vocabulary: {
-    [key: string]: { pol: number };
+    [key: string]: { pol: string };
   };
   type: "senticon";
 }
 
-interface VocPattern {
+interface VocPatternOptions extends BaseOptions {
   vocabulary: {
-    [key: string]: { polarity: number };
+    [key: string]: { polarity: string };
   };
   type: "pattern";
 }
 
-interface VocAfinn {
+interface VocAfinnOptions extends BaseOptions {
   vocabulary: {
-    [key: string]: number;
+    [key: string]: string;
   };
   type: "afinn";
 }
 
-type Vocabulary = VocPattern | VocSenticon | VocAfinn;
+type Options = VocPatternOptions | VocSenticonOptions | VocAfinnOptions;
 
-export function sentimentAnalyzer(
-  tokens: string[],
-  negations: string[] = [],
-  voc: Vocabulary
-) {
+// TODO add options object
+export function sentimentAnalyzer(tokens: string[], options: Options) {
+  const negations = options.negations || [];
   let _vocabulary: { [key: string]: number };
 
-  switch (voc.type) {
+  // TODO add try catch for parseInt
+  switch (options.type) {
     case "senticon":
-      Object.keys(voc.vocabulary).forEach(word => {
-        _vocabulary[word] = voc.vocabulary[word].pol;
+      Object.keys(options.vocabulary).forEach(word => {
+        _vocabulary[word] = parseInt(options.vocabulary[word].pol);
       });
       break;
 
     case "pattern":
-      Object.keys(voc.vocabulary).forEach(word => {
-        _vocabulary[word] = voc.vocabulary[word].polarity;
+      Object.keys(options.vocabulary).forEach(word => {
+        _vocabulary[word] = parseInt(options.vocabulary[word].polarity);
       });
       break;
 
     case "afinn":
-      _vocabulary = voc.vocabulary;
+      Object.keys(options.vocabulary).forEach(polarity => {
+        _vocabulary[polarity] = parseInt(options.vocabulary[polarity]);
+      });
       break;
 
     default:
