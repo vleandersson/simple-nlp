@@ -1,0 +1,30 @@
+{
+  "author": "Viktor Leandersson",
+  "name": "simple-nlp-sentiment",
+  "description": "Simple NLP is a library with the fundamentals for basic natural language processing",
+  "keywords": [
+    "simple nlp sentiment"
+  ],
+  "version": "0.0.0",
+  "homepage": "https://github.com/vleandersson/simple-nlp",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vleandersson/simple-nlp",
+    "directory": "packages/simple-nlp-sentiment"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "main": "./index.ts",
+  "dependencies": {
+    "simple-nlp": "0.x"
+  },
+  "devDependencies": {
+    "ts-loader": "^6.0.4",
+    "typescript": "^3.5.3",
+    "webpack": "^4.39.1",
+    "webpack-cli": "^3.3.6",
+    "webpack-dev-server": "^3.8.0"
+  }
+}
