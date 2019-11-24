@@ -1,6 +1,8 @@
+const { defaults } = require("jest-config");
+
 module.exports = {
   transform: {
-    ".(ts|tsx)": "babel-jest"
+    ".+\\.(ts|tsx)$": "babel-jest"
   },
   moduleNameMapper: {
     "\\.(jpg|jpeg|png|gif|eot|otf|webp|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$":
@@ -8,7 +10,7 @@ module.exports = {
     "\\.(svg)$": "<rootDir>/config/jest/svgMock.js"
   },
   testRegex: "(\\.(spec))\\.(ts|tsx)$",
-  moduleFileExtensions: ["ts", "tsx", "js", "json"],
+  moduleFileExtensions: [...defaults.moduleFileExtensions],
   testPathIgnorePatterns: ["/node_modules/"],
   collectCoverageFrom: [
     "**/packages/**/*.{ts|tsx}",

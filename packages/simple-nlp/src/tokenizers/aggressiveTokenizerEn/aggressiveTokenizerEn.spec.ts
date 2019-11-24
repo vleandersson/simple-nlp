@@ -3,7 +3,7 @@ import { aggressiveTokenizerEn } from "./aggressiveTokenizerEn";
 describe("Aggressive tokenizer", () => {
   test("normal sentence", () => {
     expect(aggressiveTokenizerEn("I am running")).toEqual([
-      "I",
+      "i",
       "am",
       "running"
     ]);

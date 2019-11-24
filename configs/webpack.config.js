@@ -21,7 +21,8 @@ module.exports = {
         ],
         exclude: /node_modules/
       },
-      { test: /package.json/ }
+      { test: /package.json/ },
+      { test: /\.json$/, loader: "json-loader" }
     ]
   },
   target: "web",
@@ -33,6 +34,6 @@ module.exports = {
     filename: "umd/[name].production.min.js",
     path: path.resolve(__dirname, "../dist"),
     library: "",
-    libraryTarget: "commonjs"
+    libraryTarget: "umd"
   }
 };

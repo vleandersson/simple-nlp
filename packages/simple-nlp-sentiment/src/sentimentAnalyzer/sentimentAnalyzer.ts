@@ -23,53 +23,63 @@ interface VocAfinnOptions extends BaseOptions {
   type: "afinn";
 }
 
-type Options = VocPatternOptions | VocSenticonOptions | VocAfinnOptions;
+export type SentimentAnalyzerOptions =
+  | VocPatternOptions
+  | VocSenticonOptions
+  | VocAfinnOptions;
 
-// TODO add options object
-export function sentimentAnalyzer(tokens: string[], options: Options) {
-  const negations = options.negations || [];
-  let _vocabulary: { [key: string]: number };
+export class SentimentAnalyzer {
+  private negations?: string[];
+  private vocabulary: { [key: string]: number };
 
-  // TODO add try catch for parseInt
-  switch (options.type) {
-    case "senticon":
-      Object.keys(options.vocabulary).forEach(word => {
-        _vocabulary[word] = parseInt(options.vocabulary[word].pol);
-      });
-      break;
+  constructor(options: SentimentAnalyzerOptions) {
+    this.vocabulary = {};
+    this.negations = options.negations;
 
-    case "pattern":
-      Object.keys(options.vocabulary).forEach(word => {
-        _vocabulary[word] = parseInt(options.vocabulary[word].polarity);
-      });
-      break;
+    switch (options.type) {
+      case "senticon":
+        Object.keys(options.vocabulary).forEach(word => {
+          const polarity = options.vocabulary[word].pol;
+          this.vocabulary[word] = polarity ? parseFloat(polarity) : 0;
+        });
+        break;
 
-    case "afinn":
-      Object.keys(options.vocabulary).forEach(polarity => {
-        _vocabulary[polarity] = parseInt(options.vocabulary[polarity]);
-      });
-      break;
+      case "pattern":
+        Object.keys(options.vocabulary).forEach(word => {
+          const polarity = options.vocabulary[word].polarity;
 
-    default:
-      throw new Error("Unknown vocabulary type");
+          this.vocabulary[word] = polarity ? parseFloat(polarity) : 0;
+        });
+        break;
+
+      case "afinn":
+        Object.keys(options.vocabulary).forEach(word => {
+          this.vocabulary[word] = parseFloat(options.vocabulary[word]);
+        });
+        break;
+
+      default:
+        throw new Error("Unknown vocabulary type");
+    }
   }
 
-  var score = 0;
-  var negator = 1;
-  var nrHits = 0;
+  public getSentiment(tokens: string[]) {
+    let score = 0;
+    let negator = 1;
+    let nrHits = 0;
 
-  tokens.forEach(token => {
-    var lowerCased = token.toLowerCase();
-    if (negations.indexOf(lowerCased) > -1) {
-      negator = -1;
-      nrHits++;
-    } else if (_vocabulary[lowerCased] !== undefined) {
-      score += negator * _vocabulary[lowerCased];
-      nrHits++;
-    }
-  });
+    tokens.forEach(token => {
+      if (this.negations && this.negations.indexOf(token) > -1) {
+        negator = -1;
+        nrHits++;
+      } else if (this.vocabulary[token]) {
+        score += negator * this.vocabulary[token];
+        nrHits++;
+      }
+    });
 
-  score = score / tokens.length;
+    score = score / nrHits;
 
-  return { score, nrHits };
+    return { score, nrHits };
+  }
 }

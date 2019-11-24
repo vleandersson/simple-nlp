@@ -8,7 +8,7 @@ export const porterStemmerFr = (text: string[]) =>
  * @param  {String} token Word to be stemmed
  * @return {String}       Stemmed word
  */
-export function porterStemFrFn(token: string) {
+function porterStemFrFn(token: string) {
   token = prelude(token.toLowerCase());
 
   if (token.length == 1) return token;

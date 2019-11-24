@@ -1,7 +1,7 @@
 const util = require("util");
 const exec = util.promisify(require("child_process").exec);
 const fs = require("fs");
-var copyFiles = require("./build-copy-files");
+const copyFiles = require("./build-copy-files");
 
 const success = msg => console.info("\x1b[32m", msg, "\x1b[0m");
 const start = msg => console.info("\x1b[45m", msg, "\x1b[0m");
@@ -10,23 +10,20 @@ const info = msg => console.info("\x1b[45m", msg, "\x1b[0m");
 
 const DIST_FOLDER = __dirname + `/../dist`;
 
-// Get package args
-// args = [];
-// process.argv.forEach(function(val) {
-//   args.push(val);
-// });
-// args.splice(0, 2);
-
 run();
 
 async function run(packageName) {
   try {
+    start("Build args");
+    const args = buildArgs();
+    success("Build args completed");
+
     start("Checks started");
     await runChecks();
     success("Checks completed");
 
     start("Build started");
-    await runBuild();
+    await runBuild(args.package);
     success("Build completed");
 
     start("Build package files from template");
@@ -41,11 +38,30 @@ async function run(packageName) {
   }
 }
 
+function buildArgs() {
+  const args = require("yargs")
+    .alias({ P: "package", S: "semVar" })
+    .describe({
+      P: "Choose package to build",
+      S: "Semantic Versioning Specification"
+    })
+    .default({ P: "simple-nlp", S: "patch" })
+    .choices({
+      P: ["simple-nlp", "simple-nlp-sentiment"],
+      S: ["patch", "minor", "major"]
+    })
+    .help("H").argv;
+
+  info(args);
+
+  return args;
+}
+
 async function runChecks() {
   await Promise.all([exec("yarn test"), exec("yarn check-types")]);
 }
 
-async function runBuild() {
+async function runBuild(package) {
   const webpackConfigPath = __dirname + "/../configs/webpack.config.js";
   info(`Using config ${webpackConfigPath}`);
   const build = await exec(
