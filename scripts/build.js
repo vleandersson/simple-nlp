@@ -30,7 +30,7 @@ async function buildEverything() {
     success("Build completed");
 
     start("Build package files from template");
-    await runBuildPackage(args.package);
+    await runBuildPackage(args);
     success("Build package files from template completed");
 
     start("Write index files");
@@ -75,7 +75,7 @@ async function runBuild(packageName) {
   console.log(build.stdout);
 }
 
-async function runBuildPackage(packageName) {
+async function runBuildPackage({ package: packageName, semVar }) {
   const packageRootFolder = `${ROOT_FOLDER}/packages/${packageName}`;
   const distFolder = `${packageRootFolder}/${DIST_FOLDER_NAME}`;
 
@@ -89,7 +89,7 @@ async function runBuildPackage(packageName) {
     currentPackageVersion = "0.0.0";
   }
 
-  const nextNpmVersion = stepUpVersion(currentPackageVersion);
+  const nextNpmVersion = stepUpVersion(currentPackageVersion, semVar);
 
   let packageJson = {
     ...require(`${packageRootFolder}/package.json`)
