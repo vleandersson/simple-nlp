@@ -12,13 +12,13 @@ const DIST_FOLDER = __dirname + `/../dist`;
 
 run();
 
-async function run(packageName) {
+async function run() {
   try {
     start("Build args");
     const args = buildArgs();
     success("Build args completed");
 
-    if (!args) {
+    if (!args || args.help) {
       return;
     }
 
@@ -31,7 +31,7 @@ async function run(packageName) {
     success("Build completed");
 
     start("Build package files from template");
-    await runBuildPackage(packageName);
+    await runBuildPackage(args.package);
     success("Build package files from template completed");
 
     start("Write index files");
@@ -65,28 +65,36 @@ async function runChecks() {
   await Promise.all([exec("yarn test"), exec("yarn check-types")]);
 }
 
-async function runBuild(package) {
-  const webpackConfigPath = __dirname + "/../configs/webpack.config.js";
+async function runBuild(packageName) {
+  const webpackConfigPath = `${__dirname}/../configs/webpack.config.js`;
+  const context = `${__dirname}/../packages/${packageName}`;
+
   info(`Using config ${webpackConfigPath}`);
   const build = await exec(
-    `webpack --config ${webpackConfigPath} --mode=production`
+    `webpack --config ${webpackConfigPath} --mode=production --context ${context}`
   );
   console.log(build.stdout);
 }
 
 async function runBuildPackage(packageName) {
-  const { stdout: pkgVr } = await exec(
-    `npm view ${packageName || "simple-nlp"} version`
-  );
+  let currentPackageVersion;
 
-  const currentPackageVersion = pkgVr.replace(/\r?\n|\r/g, "");
+  try {
+    const { stdout: pkgVr } = await exec(
+      `npm view ${packageName || "simple-nlp"} version`
+    );
+
+    currentPackageVersion = pkgVr.replace(/\r?\n|\r/g, "");
+  } catch {
+    currentPackageVersion = "0.0.0";
+  }
+
+  const nextNpmVersion = stepUpVersion(currentPackageVersion);
 
   let packageJson = {
     ...require(__dirname +
       `/../packages/${packageName || "simple-nlp"}/package.json`)
   };
-
-  const nextNpmVersion = stepUpVersion(currentPackageVersion);
 
   info(`Next NPM version detected: ${nextNpmVersion}`);
 

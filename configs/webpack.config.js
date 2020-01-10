@@ -2,7 +2,7 @@ const path = require("path");
 // const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
 module.exports = {
-  entry: { "simple-nlp": "./packages/simple-nlp/index.ts" },
+  entry: { "simple-nlp": "./index.ts" },
   devtool: "inline-source-map",
   mode: "production",
   module: {
