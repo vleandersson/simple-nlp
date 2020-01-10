@@ -28,7 +28,7 @@
   "main": "packages/simple-nlp/index.tx",
   "scripts": {
     "build": "node scripts/build.js",
-    "publish-package": "npm login && npm publish ./dist --access=public",
+    "publish-package": "npm login && node scripts/publish-package.js",
     "test": "jest --config=./jest.config.js",
     "test:watch": "yarn test --watch",
     "check-types": "tsc -p ."
