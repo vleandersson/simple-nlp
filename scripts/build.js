@@ -18,6 +18,10 @@ async function run(packageName) {
     const args = buildArgs();
     success("Build args completed");
 
+    if (!args) {
+      return;
+    }
+
     start("Checks started");
     await runChecks();
     success("Checks completed");
