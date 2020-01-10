@@ -2,7 +2,7 @@ const path = require("path");
 // const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
 module.exports = {
-  entry: { "simple-nlp": "./index.ts" },
+  entry: { main: "./index.ts" },
   devtool: "inline-source-map",
   mode: "production",
   module: {
@@ -25,15 +25,18 @@ module.exports = {
       { test: /\.json$/, loader: "json-loader" }
     ]
   },
+  externals: {
+    "simple-nlp": "simple-nlp",
+    "simple-nlp-sentiment": "simple-nlp-sentiment"
+  },
   target: "web",
   resolve: {
     extensions: [".tsx", ".ts", ".js"]
   },
   // plugins: [new CleanWebpackPlugin()],
   output: {
-    filename: "umd/[name].production.min.js",
-    path: path.resolve(__dirname, "../dist"),
-    library: "",
+    filename: "bundle/[name].production.min.js",
+    library: "[name]",
     libraryTarget: "umd"
   }
 };

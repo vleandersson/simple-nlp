@@ -1,7 +1,7 @@
-module.exports = async (args, fs) => {
+module.exports = async (args, fs, distFolder) => {
   // Copy files
   args.forEach(file => {
-    copyFile(file.from, `./dist/${file.to || file.from}`);
+    copyFile(file.from, `${distFolder}/${file.to || file.from}`);
   });
 
   function copyFile(fileName, distName) {

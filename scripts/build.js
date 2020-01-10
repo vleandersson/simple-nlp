@@ -8,11 +8,10 @@ const start = msg => console.info("\x1b[45m", msg, "\x1b[0m");
 const error = msg => console.error("\x1b[31m", msg, "\x1b[0m");
 const info = msg => console.info("\x1b[45m", msg, "\x1b[0m");
 
-const DIST_FOLDER = __dirname + `/../dist`;
+const DIST_FOLDER_NAME = "dist";
+const ROOT_FOLDER = __dirname + `/..`;
 
-run();
-
-async function run() {
+async function buildEverything() {
   try {
     start("Build args");
     const args = buildArgs();
@@ -35,7 +34,7 @@ async function run() {
     success("Build package files from template completed");
 
     start("Write index files");
-    await writeIndexFiles();
+    await writeIndexFiles(args.package);
     success("Write index files completed");
   } catch (err) {
     error(err);
@@ -67,22 +66,23 @@ async function runChecks() {
 
 async function runBuild(packageName) {
   const webpackConfigPath = `${__dirname}/../configs/webpack.config.js`;
-  const context = `${__dirname}/../packages/${packageName}`;
+  const context = `${ROOT_FOLDER}/packages/${packageName}`;
 
   info(`Using config ${webpackConfigPath}`);
   const build = await exec(
-    `webpack --config ${webpackConfigPath} --mode=production --context ${context}`
+    `webpack --config ${webpackConfigPath} --mode=production --context ${context} --output-path ${context}/${DIST_FOLDER_NAME}`
   );
   console.log(build.stdout);
 }
 
 async function runBuildPackage(packageName) {
+  const packageRootFolder = `${ROOT_FOLDER}/packages/${packageName}`;
+  const distFolder = `${packageRootFolder}/${DIST_FOLDER_NAME}`;
+
   let currentPackageVersion;
 
   try {
-    const { stdout: pkgVr } = await exec(
-      `npm view ${packageName || "simple-nlp"} version`
-    );
+    const { stdout: pkgVr } = await exec(`npm view ${packageName} version`);
 
     currentPackageVersion = pkgVr.replace(/\r?\n|\r/g, "");
   } catch {
@@ -92,8 +92,7 @@ async function runBuildPackage(packageName) {
   const nextNpmVersion = stepUpVersion(currentPackageVersion);
 
   let packageJson = {
-    ...require(__dirname +
-      `/../packages/${packageName || "simple-nlp"}/package.json`)
+    ...require(`${packageRootFolder}/package.json`)
   };
 
   info(`Next NPM version detected: ${nextNpmVersion}`);
@@ -102,13 +101,13 @@ async function runBuildPackage(packageName) {
   packageJson = {
     ...packageJson,
     version: nextNpmVersion,
-    files: ["README.md", "types/", "index.js", "index.d.ts", "umd/"],
+    files: ["README.md", "types/", "index.js", "index.d.ts", "bundle/"],
     main: "index.js",
     types: "index.d.ts"
   };
 
   fs.writeFile(
-    `${DIST_FOLDER}/package.json`,
+    `${distFolder}/package.json`,
     JSON.stringify(packageJson),
     err => {
       if (err) {
@@ -118,13 +117,15 @@ async function runBuildPackage(packageName) {
   );
 
   const files = [{ from: "README.md" }, { from: ".npmignore" }];
-  await copyFiles(files, fs);
+  await copyFiles(files, fs, distFolder);
 }
 
-async function writeIndexFiles() {
+async function writeIndexFiles(packageName) {
+  const packageRootFolder = `${ROOT_FOLDER}/packages/${packageName}`;
+
   // Types index
   fs.writeFile(
-    `${DIST_FOLDER}/index.d.ts`,
+    `${packageRootFolder}/${DIST_FOLDER_NAME}/index.d.ts`,
     'export * from "./types/src";',
     err => {
       if (err) {
@@ -133,10 +134,10 @@ async function writeIndexFiles() {
     }
   );
 
-  // Umd index
+  // Bundle index
   fs.writeFile(
-    `${DIST_FOLDER}/index.js`,
-    'module.exports = require("./umd/simple-nlp.production.min.js");',
+    `${packageRootFolder}/${DIST_FOLDER_NAME}/index.js`,
+    'module.exports = require("./bundle/simple-nlp.production.min.js");',
     err => {
       if (err) {
         return error(err);
@@ -164,3 +165,5 @@ function stepUpVersion(currentVersion, type) {
       return parts.join(".");
   }
 }
+
+buildEverything();

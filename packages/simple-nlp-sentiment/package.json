@@ -17,7 +17,7 @@
     "node": ">=0.10.0"
   },
   "main": "./index.ts",
-  "dependencies": {
+  "peerDependencies": {
     "simple-nlp": "0.x"
   },
   "devDependencies": {
