@@ -8,8 +8,12 @@ const start = msg => console.info("\x1b[45m", msg, "\x1b[0m");
 const error = msg => console.error("\x1b[31m", msg, "\x1b[0m");
 const info = msg => console.info("\x1b[45m", msg, "\x1b[0m");
 
-const DIST_FOLDER_NAME = "dist";
 const ROOT_FOLDER = __dirname + `/..`;
+
+const DIST_FOLDER_NAME = "dist";
+const COMMON_JS_FOLDER_NAME = "lib";
+const ES6_FOLDER_NAME = "lib-esm";
+const UMD_FOLDER_NAME = "bundles";
 
 async function buildEverything() {
   try {
@@ -21,20 +25,20 @@ async function buildEverything() {
       return;
     }
 
-    start("Checks started");
-    await runChecks();
-    success("Checks completed");
+    // start("Checks started");
+    // await runChecks();
+    // success("Checks completed");
 
     start("Build started");
-    await runBuild(args.package);
+    await compilePackage(args.package);
     success("Build completed");
 
     start("Build package files from template");
-    await runBuildPackage(args);
+    await buildPackageJson(args);
     success("Build package files from template completed");
 
     start("Write index files");
-    await writeIndexFiles(args.package);
+    await buildIndexFiles(args.package);
     success("Write index files completed");
   } catch (err) {
     error(err);
@@ -64,7 +68,23 @@ async function runChecks() {
   await Promise.all([exec("yarn test"), exec("yarn check-types")]);
 }
 
-async function runBuild(packageName) {
+async function compilePackage(packageName) {
+  const commonJsBuild = compileCommonJs(packageName);
+
+  await Promise.all([commonJsBuild]);
+}
+
+async function compileCommonJs(packageName) {
+  const context = `${ROOT_FOLDER}/packages/${packageName}`;
+
+  return exec(
+    `tsc -p ${context} --outDir ${context}/${DIST_FOLDER_NAME}/${COMMON_JS_FOLDER_NAME}`
+  );
+}
+
+async function compileEs6(packageName) {}
+
+async function compileUMD(packageName) {
   const webpackConfigPath = `${__dirname}/../configs/webpack.config.js`;
   const context = `${ROOT_FOLDER}/packages/${packageName}`;
 
@@ -75,7 +95,7 @@ async function runBuild(packageName) {
   console.log(build.stdout);
 }
 
-async function runBuildPackage({ package: packageName, semVar }) {
+async function buildPackageJson({ package: packageName, semVar }) {
   const packageRootFolder = `${ROOT_FOLDER}/packages/${packageName}`;
   const distFolder = `${packageRootFolder}/${DIST_FOLDER_NAME}`;
 
@@ -89,7 +109,10 @@ async function runBuildPackage({ package: packageName, semVar }) {
     currentPackageVersion = "0.0.0";
   }
 
-  const nextNpmVersion = stepUpVersion(currentPackageVersion, semVar);
+  const nextNpmVersion = calculateNextPackageVersion(
+    currentPackageVersion,
+    semVar
+  );
 
   let packageJson = {
     ...require(`${packageRootFolder}/package.json`)
@@ -120,7 +143,7 @@ async function runBuildPackage({ package: packageName, semVar }) {
   await copyFiles(files, fs, distFolder);
 }
 
-async function writeIndexFiles(packageName) {
+async function buildIndexFiles(packageName) {
   const packageRootFolder = `${ROOT_FOLDER}/packages/${packageName}`;
 
   // Types index
@@ -146,7 +169,7 @@ async function writeIndexFiles(packageName) {
   );
 }
 
-function stepUpVersion(currentVersion, type) {
+function calculateNextPackageVersion(currentVersion, type) {
   const parts = currentVersion.split(".").map(v => parseInt(v));
 
   switch (type) {
