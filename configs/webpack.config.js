@@ -1,9 +1,28 @@
 const path = require("path");
+const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 // const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
 module.exports = {
-  entry: { main: "./index.ts" },
+  entry: { main: "./index.ts", "main.min": "./index.ts" },
+  output: {
+    filename: "bundle/[name].production.min.js",
+    library: "[name]",
+    libraryTarget: "umd",
+    umdNamedDefine: true
+  },
+  resolve: {
+    extensions: [".tsx", ".ts", ".js"]
+  },
   devtool: "source-map",
+  optimization: {
+    minimizer: [
+      new UglifyJsPlugin({
+        parallel: 4,
+        sourceMap: true,
+        include: /\.min\.js$/
+      })
+    ]
+  },
   mode: "production",
   module: {
     rules: [
@@ -11,11 +30,12 @@ module.exports = {
         test: /\.(ts|tsx)$/,
         use: [
           {
-            loader: "ts-loader",
+            loader: "awesome-typescript-loader",
             options: {
               transpileOnly: true,
               experimentalWatchApi: true,
-              happyPackMode: true
+              happyPackMode: true,
+              declaration: false
             }
           }
         ],
@@ -29,14 +49,5 @@ module.exports = {
     "simple-nlp": "simple-nlp",
     "simple-nlp-sentiment": "simple-nlp-sentiment"
   },
-  target: "web",
-  resolve: {
-    extensions: [".tsx", ".ts", ".js"]
-  },
-  // plugins: [new CleanWebpackPlugin()],
-  output: {
-    filename: "bundle/[name].production.min.js",
-    library: "[name]",
-    libraryTarget: "umd"
-  }
+  target: "web"
 };
