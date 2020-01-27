@@ -72,7 +72,7 @@ async function runChecks() {
 async function compilePackage(packageName) {
   const umdBuild = compileUMD(packageName);
 
-  return Promise.all(umdBuild);
+  return Promise.all([umdBuild]);
 }
 
 async function compileUMD(packageName) {
@@ -81,7 +81,7 @@ async function compileUMD(packageName) {
 
   info(`Using config ${webpackConfigPath}`);
   const build = await exec(
-    `webpack --config ${webpackConfigPath} --mode=production --context ${context} --output-path ${context}/${DIST_FOLDER_NAME}/${UMD_FOLDER_NAME}`
+    `webpack --config ${webpackConfigPath} --mode=production --context ${context} --output-path ${context}/${DIST_FOLDER_NAME}`
   );
   console.log(build.stdout);
 }

@@ -1,11 +1,14 @@
 const path = require("path");
 const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
-// const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
 module.exports = {
-  entry: { main: "./index.ts", "main.min": "./index.ts" },
+  entry: {
+    "main.production": "./index.ts",
+    "main.production.min": "./index.ts"
+  },
   output: {
-    filename: "bundle/[name].production.min.js",
+    filename: "[name].js",
     library: "[name]",
     libraryTarget: "umd",
     umdNamedDefine: true
@@ -45,6 +48,11 @@ module.exports = {
       { test: /\.json$/, loader: "json-loader" }
     ]
   },
+  plugins: [
+    new CleanWebpackPlugin({
+      verbose: true
+    })
+  ],
   externals: {
     "simple-nlp": "simple-nlp",
     "simple-nlp-sentiment": "simple-nlp-sentiment"
