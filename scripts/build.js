@@ -66,32 +66,13 @@ function buildArgs() {
 }
 
 async function runChecks() {
-  await Promise.all([exec("yarn test"), exec("yarn check-types")]);
+  return Promise.all([exec("yarn test"), exec("yarn check-types")]);
 }
 
 async function compilePackage(packageName) {
-  const commonJsBuild = compileCommonJs(packageName);
-  const es6Build = compileEs6(packageName);
   const umdBuild = compileUMD(packageName);
 
-  await Promise.all([umdBuild, commonJsBuild, es6Build]);
-}
-
-async function compileCommonJs(packageName) {
-  const context = `${ROOT_FOLDER}/packages/${packageName}`;
-
-  return exec(
-    `tsc -p ${context} --outDir ${context}/${DIST_FOLDER_NAME}/${COMMON_JS_FOLDER_NAME}`
-  );
-}
-
-async function compileEs6(packageName) {
-  const context = `${ROOT_FOLDER}/packages/${packageName}`;
-
-  return exec(
-    // Compiles with module set to es6
-    `tsc -p ${context} -m es6 --outDir ${context}/${DIST_FOLDER_NAME}/${ES6_FOLDER_NAME}`
-  );
+  return Promise.all(umdBuild);
 }
 
 async function compileUMD(packageName) {
