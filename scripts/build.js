@@ -152,7 +152,6 @@ async function buildIndexFiles(packageName) {
   fs.writeFile(
     `${packageRootFolder}/${DIST_FOLDER_NAME}/index.js`,
     `
-    module.exports = require("./main.production.min.js");
     'use strict';
 
     if (process.env.NODE_ENV === 'production') {
