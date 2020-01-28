@@ -4,7 +4,7 @@ const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
 module.exports = {
   entry: {
-    "main.production": "./index.ts",
+    "main.development": "./index.ts",
     "main.production.min": "./index.ts"
   },
   output: {
@@ -21,7 +21,7 @@ module.exports = {
     minimizer: [
       new UglifyJsPlugin({
         parallel: 4,
-        sourceMap: true,
+        sourceMap: false,
         include: /\.min\.js$/
       })
     ]

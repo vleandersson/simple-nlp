@@ -13,7 +13,7 @@ const ROOT_FOLDER = __dirname + `/..`;
 const DIST_FOLDER_NAME = "dist";
 const COMMON_JS_FOLDER_NAME = "lib";
 const ES6_FOLDER_NAME = "lib-esm";
-const UMD_FOLDER_NAME = "bundles";
+const UMD_FOLDER_NAME = "umd";
 
 async function buildEverything() {
   try {
@@ -81,7 +81,7 @@ async function compileUMD(packageName) {
 
   info(`Using config ${webpackConfigPath}`);
   const build = await exec(
-    `webpack --config ${webpackConfigPath} --mode=production --context ${context} --output-path ${context}/${DIST_FOLDER_NAME}`
+    `webpack --config ${webpackConfigPath} --mode=production --context ${context} --output-path ${context}/${DIST_FOLDER_NAME}/${UMD_FOLDER_NAME}`
   );
   console.log(build.stdout);
 }
@@ -151,7 +151,16 @@ async function buildIndexFiles(packageName) {
   // Bundle index
   fs.writeFile(
     `${packageRootFolder}/${DIST_FOLDER_NAME}/index.js`,
-    'module.exports = require("./bundle/simple-nlp.production.min.js");',
+    `
+    module.exports = require("./main.production.min.js");
+    'use strict';
+
+    if (process.env.NODE_ENV === 'production') {
+      module.exports = require('./umd/main.production.min.js');
+    } else {
+      module.exports = require('./umd/main.development.js');
+    }
+    `,
     err => {
       if (err) {
         return error(err);
