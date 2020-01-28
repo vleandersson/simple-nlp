@@ -16,17 +16,10 @@ module.exports = {
   resolve: {
     extensions: [".tsx", ".ts", ".js"]
   },
-  devtool: "source-map",
-  optimization: {
-    minimizer: [
-      new UglifyJsPlugin({
-        parallel: 4,
-        sourceMap: false,
-        include: /\.min\.js$/
-      })
-    ]
-  },
   mode: "production",
+  devtool: "source-map",
+  target: "web",
+
   module: {
     rules: [
       {
@@ -38,7 +31,7 @@ module.exports = {
               transpileOnly: true,
               experimentalWatchApi: true,
               happyPackMode: true,
-              declaration: false
+              declaration: true
             }
           }
         ],
@@ -48,14 +41,25 @@ module.exports = {
       { test: /\.json$/, loader: "json-loader" }
     ]
   },
+
   plugins: [
     new CleanWebpackPlugin({
       verbose: true
     })
   ],
+
+  optimization: {
+    minimizer: [
+      new UglifyJsPlugin({
+        parallel: 4,
+        sourceMap: false,
+        include: /\.min\.js$/
+      })
+    ]
+  },
+
   externals: {
     "simple-nlp": "simple-nlp",
     "simple-nlp-sentiment": "simple-nlp-sentiment"
-  },
-  target: "web"
+  }
 };
