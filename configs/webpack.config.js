@@ -16,7 +16,7 @@ module.exports = {
     umdNamedDefine: true
   },
   resolve: {
-    extensions: [".tsx", ".ts", ".js"]
+    extensions: [".tsx", ".ts", ".js", ".json"]
   },
   devtool: "source-map",
   target: "web",
@@ -41,8 +41,7 @@ module.exports = {
         ],
         exclude: /node_modules/
       },
-      { test: /package.json/ },
-      { test: /\.json$/, loader: "json-loader" }
+      { test: /package.json/ }
     ]
   },
 

@@ -7,19 +7,19 @@ import {
 import { SentimentAnalyzer } from "./sentimentAnalyzer";
 import {
   englishNegations,
-  englishPatternVoca,
-  englishSenticonVoca
+  englishPatternVocabulary,
+  englishSenticonVocabulary
 } from "../languageDB";
 
 const patternAnalyzer = new SentimentAnalyzer({
   type: "pattern",
   negations: englishNegations,
-  vocabulary: englishPatternVoca
+  vocabulary: englishPatternVocabulary
 });
 const senticonAnalyzer = new SentimentAnalyzer({
   type: "senticon",
   negations: englishNegations,
-  vocabulary: englishSenticonVoca
+  vocabulary: englishSenticonVocabulary
 });
 
 senticonAnalyzer.stemVocabulary(porterStemmer);

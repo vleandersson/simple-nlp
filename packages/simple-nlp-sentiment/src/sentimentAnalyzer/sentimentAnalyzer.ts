@@ -1,25 +1,25 @@
+import {
+  SenticonVocabulary,
+  PatternVocabulary,
+  AfinnVocabulary
+} from "../languageDB/vocabulary";
+
 interface BaseOptions {
   negations?: string[];
 }
 
 interface VocSenticonOptions extends BaseOptions {
-  vocabulary: {
-    [key: string]: { pol: string };
-  };
+  vocabulary: SenticonVocabulary;
   type: "senticon";
 }
 
 interface VocPatternOptions extends BaseOptions {
-  vocabulary: {
-    [key: string]: { polarity: string };
-  };
+  vocabulary: PatternVocabulary;
   type: "pattern";
 }
 
 interface VocAfinnOptions extends BaseOptions {
-  vocabulary: {
-    [key: string]: string;
-  };
+  vocabulary: AfinnVocabulary;
   type: "afinn";
 }
 

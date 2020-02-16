@@ -6,5 +6,10 @@
 		{
 			"path": "./../simple-npm-test"
 		}
-	]
+	],
+	"settings": {
+		"cSpell.words": [
+			"senticon"
+		]
+	}
 }
