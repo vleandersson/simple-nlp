@@ -115,7 +115,7 @@ async function buildPackageJson({ package: packageName, semVar }) {
   packageJson = {
     ...packageJson,
     version: nextNpmVersion,
-    files: ["README.md", "types/", "index.js", "index.d.ts", "bundle/"],
+    files: ["README.md", "index.js", "index.d.ts", "bundle/"],
     main: "index.js",
     types: "index.d.ts"
   };
@@ -136,17 +136,6 @@ async function buildPackageJson({ package: packageName, semVar }) {
 
 async function buildIndexFiles(packageName) {
   const packageRootFolder = `${ROOT_FOLDER}/packages/${packageName}`;
-
-  // Types index
-  fs.writeFile(
-    `${packageRootFolder}/${DIST_FOLDER_NAME}/index.d.ts`,
-    'export * from "./types/src";',
-    err => {
-      if (err) {
-        return error(err);
-      }
-    }
-  );
 
   // Bundle index
   fs.writeFile(

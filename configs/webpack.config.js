@@ -33,7 +33,7 @@ module.exports = {
               // experimentalWatchApi: true,
               // happyPackMode: true
               compilerOptions: {
-                outDir: "./dist/types"
+                outDir: "./dist"
               }
             }
           }
