@@ -11,8 +11,6 @@ const info = msg => console.info("\x1b[45m", msg, "\x1b[0m");
 const ROOT_FOLDER = __dirname + `/..`;
 
 const DIST_FOLDER_NAME = "dist";
-const COMMON_JS_FOLDER_NAME = "lib";
-const ES6_FOLDER_NAME = "lib-esm";
 const UMD_FOLDER_NAME = "umd";
 
 async function buildEverything() {
@@ -25,13 +23,17 @@ async function buildEverything() {
       return;
     }
 
+    start("Setup env");
+    setupEnv(args);
+    success("Setup env completed");
+
     // TODO: Make sure this does not build any types files
     // start("Checks started");
     // await runChecks();
     // success("Checks completed");
 
     start("Build started");
-    await compilePackage(args.package);
+    await compilePackage();
     success("Build completed");
 
     start("Build package files from template");
@@ -39,7 +41,7 @@ async function buildEverything() {
     success("Build package files from template completed");
 
     start("Write index files");
-    await buildIndexFiles(args.package);
+    await buildIndexFiles(args);
     success("Write index files completed");
   } catch (err) {
     error(err);
@@ -65,6 +67,14 @@ function buildArgs() {
   return args;
 }
 
+function setupEnv({ package: packageName }) {
+  process.env.packageName = packageName;
+  process.env.webpackConfigPath = `${ROOT_FOLDER}/configs/webpack.config.js`;
+  process.env.context = `${ROOT_FOLDER}/packages/${packageName}`;
+  process.env.outputPath = `${process.env.context}/${DIST_FOLDER_NAME}`;
+  process.env.umdOutputPath = `${process.env.outputPath}/${UMD_FOLDER_NAME}`;
+}
+
 async function runChecks() {
   return Promise.all([exec("yarn test"), exec("yarn check-types")]);
 }
@@ -75,21 +85,15 @@ async function compilePackage(packageName) {
   return Promise.all([umdBuild]);
 }
 
-async function compileUMD(packageName) {
-  const webpackConfigPath = `${__dirname}/../configs/webpack.config.js`;
-  const context = `${ROOT_FOLDER}/packages/${packageName}`;
-
-  info(`Using config ${webpackConfigPath}`);
+async function compileUMD() {
+  info(`Using config ${process.env.webpackConfigPath}`);
   const build = await exec(
-    `webpack --config ${webpackConfigPath} --mode=production --context ${context} --output-path ${context}/${DIST_FOLDER_NAME}/${UMD_FOLDER_NAME}`
+    `webpack --config ${process.env.webpackConfigPath} --mode=production --context ${process.env.context} --output-path ${process.env.umdOutputPath}`
   );
   console.log(build.stdout);
 }
 
 async function buildPackageJson({ package: packageName, semVar }) {
-  const packageRootFolder = `${ROOT_FOLDER}/packages/${packageName}`;
-  const distFolder = `${packageRootFolder}/${DIST_FOLDER_NAME}`;
-
   let currentPackageVersion;
 
   try {
@@ -106,7 +110,7 @@ async function buildPackageJson({ package: packageName, semVar }) {
   );
 
   let packageJson = {
-    ...require(`${packageRootFolder}/package.json`)
+    ...require(`${process.env.context}/package.json`)
   };
 
   info(`Next NPM version detected: ${nextNpmVersion}`);
@@ -115,13 +119,13 @@ async function buildPackageJson({ package: packageName, semVar }) {
   packageJson = {
     ...packageJson,
     version: nextNpmVersion,
-    files: ["README.md", "index.js", "index.d.ts", "bundle/"],
+    files: ["README.md", "index.js", `${process.env.packageName}.d.ts`, "umd/"],
     main: "index.js",
-    types: "index.d.ts"
+    types: `${process.env.packageName}.d.ts`
   };
 
   fs.writeFile(
-    `${distFolder}/package.json`,
+    `${process.env.outputPath}/package.json`,
     JSON.stringify(packageJson),
     err => {
       if (err) {
@@ -131,15 +135,13 @@ async function buildPackageJson({ package: packageName, semVar }) {
   );
 
   const files = [{ from: "README.md" }, { from: ".npmignore" }];
-  await copyFiles(files, fs, distFolder);
+  await copyFiles(files, fs, process.env.outputPath);
 }
 
-async function buildIndexFiles(packageName) {
-  const packageRootFolder = `${ROOT_FOLDER}/packages/${packageName}`;
-
+async function buildIndexFiles({}) {
   // Bundle index
   fs.writeFile(
-    `${packageRootFolder}/${DIST_FOLDER_NAME}/index.js`,
+    `${process.env.outputPath}/index.js`,
     `
     'use strict';
 
