@@ -1,9 +1,11 @@
 {
   "compilerOptions": {
-    // "allowJs": false,
+    "allowJs": false,
     "allowSyntheticDefaultImports": true,
     "alwaysStrict": true,
     "declaration": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "lib": [
       "dom",
       "es2017"
@@ -13,13 +15,13 @@
     "target": "es5",
     // "esModuleInterop": true,
     // "forceConsistentCasingInFileNames": true,
-    // "isolatedModules": true,
-    // "noImplicitAny": true,
-    // "noImplicitReturns": true,
-    // "noImplicitThis": true,
-    // "noUnusedLocals": false,
+    "isolatedModules": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": false,
     "resolveJsonModule": true,
-    // "skipLibCheck": true,
+    "skipLibCheck": true,
     "sourceMap": true,
     "strict": true,
     // "strictFunctionTypes": true,

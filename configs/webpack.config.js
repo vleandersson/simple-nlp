@@ -1,6 +1,7 @@
 const path = require("path");
 const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 
 module.exports = {
   entry: {
@@ -16,7 +17,6 @@ module.exports = {
   resolve: {
     extensions: [".tsx", ".ts", ".js"]
   },
-  mode: "production",
   devtool: "source-map",
   target: "web",
 
@@ -26,12 +26,15 @@ module.exports = {
         test: /\.(ts|tsx)$/,
         use: [
           {
-            loader: "awesome-typescript-loader",
+            loader: "ts-loader",
             options: {
-              transpileOnly: true,
-              experimentalWatchApi: true,
-              happyPackMode: true,
-              declaration: true
+              transpileOnly: false,
+              configFile: "./tsconfig.json",
+              // experimentalWatchApi: true,
+              // happyPackMode: true
+              compilerOptions: {
+                outDir: "./dist/types"
+              }
             }
           }
         ],
@@ -46,6 +49,7 @@ module.exports = {
     new CleanWebpackPlugin({
       verbose: true
     })
+    // new ForkTsCheckerWebpackPlugin({ eslint: true }) // Only prod
   ],
 
   optimization: {

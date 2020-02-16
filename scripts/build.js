@@ -48,7 +48,7 @@ async function buildEverything() {
 
 function buildArgs() {
   const args = require("yargs")
-    .alias({ P: "package", S: "semVar" })
+    .alias({ P: "package", S: "semVar", H: "help" })
     .describe({
       P: "Choose package to build",
       S: "Semantic Versioning Specification"
@@ -58,7 +58,7 @@ function buildArgs() {
       P: ["simple-nlp", "simple-nlp-sentiment"],
       S: ["patch", "minor", "major"]
     })
-    .help("H").argv;
+    .help().argv;
 
   info(args);
 
