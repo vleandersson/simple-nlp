@@ -21,5 +21,6 @@ module.exports = {
     "!index.ts",
     "!**/.scaffolding/**"
   ],
-  coverageDirectory: "docs/coverage"
+  coverageDirectory: "docs/coverage",
+  onlyChanged: true
 };
