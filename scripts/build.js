@@ -27,10 +27,9 @@ async function buildEverything() {
     setupEnv(args);
     success("Setup env completed");
 
-    // TODO: Make sure this does not build any types files
-    // start("Checks started");
-    // await runChecks();
-    // success("Checks completed");
+    start("Checks started");
+    await runChecks();
+    success("Checks completed");
 
     start("Build started");
     await compilePackage();
