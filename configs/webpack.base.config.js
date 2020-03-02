@@ -1,25 +1,16 @@
-const path = require("path");
+// const path = require("path");
 const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
-const { CleanWebpackPlugin } = require("clean-webpack-plugin");
-const DtsBundleWebpack = require("dts-bundle-webpack");
-const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
+// const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 
-module.exports = {
-  entry: {
-    "main.development": "./index.ts",
-    "main.production.min": "./index.ts"
-  },
+const baseConfig = {
   output: {
     filename: "[name].js",
-    library: "[name]",
-    libraryTarget: "umd",
-    umdNamedDefine: true
+    library: "[name]"
   },
   resolve: {
     extensions: [".tsx", ".ts", ".js", ".json"]
   },
   devtool: "source-map",
-  target: "web",
 
   module: {
     rules: [
@@ -46,14 +37,6 @@ module.exports = {
   },
 
   plugins: [
-    new CleanWebpackPlugin({
-      verbose: true
-    }),
-    new DtsBundleWebpack({
-      name: process.env.packageName,
-      main: `${process.env.outputPath}/index.d.ts`,
-      removeSource: true
-    })
     // new ForkTsCheckerWebpackPlugin({ eslint: true }) // Only prod
   ],
 
@@ -72,3 +55,5 @@ module.exports = {
     "simple-nlp-sentiment": "simple-nlp-sentiment"
   }
 };
+
+module.exports = { baseConfig };
