@@ -2,6 +2,7 @@ const util = require("util");
 const exec = util.promisify(require("child_process").exec);
 const fs = require("fs");
 const copyFiles = require("./build-copy-files");
+var rimraf = require("rimraf");
 
 // TODO: Add cleaning stage, using CleanWebpackPlugin
 // const { CleanWebpackPlugin } = require("clean-webpack-plugin");
@@ -40,8 +41,14 @@ async function buildEverything() {
     success("Build package files from template completed");
 
     start("Write index files");
-    await buildIndexFiles(args);
-    success("Write index files completed");
+    buildIndexFiles(args).then(() => {
+      success("Write index files completed");
+    });
+
+    start("Clean up dist for deploy");
+    cleanDistFolder().then(() => {
+      success("Clean up dist for deploy completed");
+    });
   } catch (err) {
     error(err);
   }
@@ -207,6 +214,11 @@ function calculateNextPackageVersion(currentVersion, type) {
       parts[2] += 1;
       return parts.join(".");
   }
+}
+
+async function cleanDistFolder() {
+  // Removes src folder from types generation
+  rimraf.sync(`${process.env.outputPath}/src`);
 }
 
 buildEverything();
