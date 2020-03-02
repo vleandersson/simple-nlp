@@ -3,15 +3,15 @@ const exec = util.promisify(require("child_process").exec);
 const fs = require("fs");
 const copyFiles = require("./build-copy-files");
 
+// TODO: Add cleaning stage, using CleanWebpackPlugin
+// const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+
 const success = msg => console.info("\x1b[32m", msg, "\x1b[0m");
 const start = msg => console.info("\x1b[45m", msg, "\x1b[0m");
 const error = msg => console.error("\x1b[31m", msg, "\x1b[0m");
 const info = msg => console.info("\x1b[45m", msg, "\x1b[0m");
 
 const ROOT_FOLDER = __dirname + `/..`;
-
-const DIST_FOLDER_NAME = "dist";
-const UMD_FOLDER_NAME = "umd";
 
 async function buildEverything() {
   try {
@@ -32,7 +32,7 @@ async function buildEverything() {
     success("Checks completed");
 
     start("Build started");
-    await compilePackage();
+    await compilePackages();
     success("Build completed");
 
     start("Build package files from template");
@@ -68,28 +68,39 @@ function buildArgs() {
 
 function setupEnv({ package: packageName }) {
   process.env.packageName = packageName;
-  process.env.webpackConfigPath = `${ROOT_FOLDER}/configs/webpack.config.js`;
+  process.env.webpackUmdConfigPath = `${ROOT_FOLDER}/configs/webpack.UMD.config.js`;
+  process.env.webpackCjsConfigPath = `${ROOT_FOLDER}/configs/webpack.CJS.config.js`;
   process.env.context = `${ROOT_FOLDER}/packages/${packageName}`;
-  process.env.outputPath = `${process.env.context}/${DIST_FOLDER_NAME}`;
-  process.env.umdOutputPath = `${process.env.outputPath}/${UMD_FOLDER_NAME}`;
+  process.env.outputPath = `${process.env.context}/dist`;
+  process.env.umdOutputPath = `${process.env.outputPath}/umd`;
+  process.env.commonJsOutputPath = `${process.env.outputPath}/cjs`;
 }
 
 async function runChecks() {
   return Promise.all([exec("yarn test"), exec("yarn check-types")]);
 }
 
-async function compilePackage(packageName) {
-  const umdBuild = compileUMD(packageName);
+async function compilePackages() {
+  const commonJsBuild = compileCommonJs();
+  const umdBuild = compileUMD();
 
-  return Promise.all([umdBuild]);
+  return Promise.all([umdBuild, commonJsBuild]);
+}
+
+async function compileCommonJs() {
+  info("Adding build for CommonJS");
+  info(`Using CJS config ${process.env.webpackCjsConfigPath}`);
+  return exec(
+    `webpack --config ${process.env.webpackCjsConfigPath} --mode=production --context ${process.env.context} --output-path ${process.env.commonJsOutputPath}`
+  );
 }
 
 async function compileUMD() {
-  info(`Using config ${process.env.webpackConfigPath}`);
-  const build = await exec(
-    `webpack --config ${process.env.webpackConfigPath} --mode=production --context ${process.env.context} --output-path ${process.env.umdOutputPath}`
+  info("Adding build for UMD");
+  info(`Using UMD config ${process.env.webpackUmdConfigPath}`);
+  return exec(
+    `webpack --config ${process.env.webpackUmdConfigPath} --mode=production --context ${process.env.context} --output-path ${process.env.umdOutputPath}`
   );
-  console.log(build.stdout);
 }
 
 async function buildPackageJson({ package: packageName, semVar }) {
@@ -118,8 +129,9 @@ async function buildPackageJson({ package: packageName, semVar }) {
   packageJson = {
     ...packageJson,
     version: nextNpmVersion,
-    files: ["README.md", "index.js", `${process.env.packageName}.d.ts`, "umd/"],
-    main: "index.js",
+    files: ["README.md", `${process.env.packageName}.d.ts`, "umd/", "cjs/"],
+    main: "./cjs/index.js",
+    module: "./umd/index.js",
     types: `${process.env.packageName}.d.ts`
   };
 
@@ -138,16 +150,35 @@ async function buildPackageJson({ package: packageName, semVar }) {
 }
 
 async function buildIndexFiles({}) {
-  // Bundle index
+  // UMD bundle index
   fs.writeFile(
-    `${process.env.outputPath}/index.js`,
+    `${process.env.outputPath}/umd/index.js`,
     `
     'use strict';
 
     if (process.env.NODE_ENV === 'production') {
-      module.exports = require('./umd/main.production.min.js');
+      module.exports = require('./umd.production.min.js');
     } else {
-      module.exports = require('./umd/main.development.js');
+      module.exports = require('./umd.development.js');
+    }
+    `,
+    err => {
+      if (err) {
+        return error(err);
+      }
+    }
+  );
+
+  // CommonJs bundle index
+  fs.writeFile(
+    `${process.env.outputPath}/cjs/index.js`,
+    `
+    'use strict';
+
+    if (process.env.NODE_ENV === 'production') {
+      module.exports = require('./cjs.production.min.js');
+    } else {
+      module.exports = require('./cjs.development.js');
     }
     `,
     err => {
