@@ -1,18 +1,10 @@
 {
-	"folders": [
-		{
-			"path": "."
-		},
-		{
-			"path": "./../simple-npm-test"
-		},
-		{
-			"path": "/Users/neverbland/Documents/natural"
-		}
-	],
-	"settings": {
-		"cSpell.words": [
-			"senticon"
-		]
-	}
+  "folders": [
+    {
+      "path": "."
+    }
+  ],
+  "settings": {
+    "cSpell.words": ["senticon"]
+  }
 }
